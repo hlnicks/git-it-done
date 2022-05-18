@@ -1,24 +1,31 @@
+var repoNameEl = document.querySelector("#repo-name");
 var issueContainerEl = document.querySelector("#issues-container");
+var limitWarningEl = document.querySelector("#limit-warning");
 
 
 var getRepoIssues = function(repo) {
-    console.log(repo);
+    // console.log(repo);
 
     var apiUrl = "https://api.github.com/repos/" + repo + "/issues?direction=asc";
+    
     fetch(apiUrl).then(function(response) {
-        // response was successful
+        // request was successful
         if(response.ok) {
             response.json().then(function(data) {
+                displayIssues(data);
 
-                // pass reponse data to DOM function
-                // displayIssues(data);
-                console.log(data);
+                // console.log(data);
+
+                // check if API has paginated issues
+                if(response.headers.get("Link")) {
+                    displayWarning(repo);
+                    // console.log("repo has more than 30 issues");
+                }
             });
         } else {
             alert("There was a problem with your request!");
         }
     });
-
 };
 
 var displayIssues = function(issues) {
@@ -29,7 +36,7 @@ var displayIssues = function(issues) {
         return;
     }
 
-
+    // loop over given issues
     for(var i = 0; i < issues.length; i++) {
 
         // create link element to take users to the issue on GitHub
@@ -58,14 +65,28 @@ var displayIssues = function(issues) {
         // append to container
         issueEl.appendChild(typeEl);
 
+        // append to the dom
         issueContainerEl.appendChild(issueEl);
-
     }
+};
 
 
+var displayWarning = function(repo){
 
+    // add text to warning container
+    limitWarningEl.textContent = "To see more than 30 issues, visit ";
+
+    // link element
+    var linkEl = document.createElement("a");
+    linkEl.textContent = "See More Issues on GitHub.com";
+    linkEl.setAttribute("href","https://github.com/" + repo + "/issues"); 
+    linkEl.setAttribute("target", "_blank");
+    
+    // append to warning container
+    limitWarningEl.appendChild(linkEl);
 
 
 };
 
-getRepoIssues("hlnicks/run-buddy");
+
+getRepoIssues("facebook/react");
