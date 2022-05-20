@@ -17,10 +17,10 @@ var getUserRepos = function(user) {
             response.json().then(function(data) {
                 displayRepos(data, user);
                 console.log(data);
-            });   
+            });
         } else {
             alert("Error: GitHub User Not Found.");
-        }   
+        }
     })
     .catch(function(error) {
         alert("Unable to connect to GitHub.");
@@ -66,8 +66,9 @@ var displayRepos = function(repos, searchTerm) {
         var repoName = repos[i].owner.login + "/" + repos[i].name;
     
         // create container for each repo
-        var repoEl = document.createElement("div");
+        var repoEl = document.createElement("a");
         repoEl.classList = "list-item flex-row justify-space-between align-center";
+        repoEl.setAttribute("href", "./single-repo.html?repo=" + repoName);
     
         // create span element to hold repo name
         var titleEl = document.createElement("span");
